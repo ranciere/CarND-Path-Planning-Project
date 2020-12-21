@@ -152,7 +152,7 @@ inline std::tuple<double, double> getXY(double s, double d, const vector<double>
   double x = seg_x + d*cos(perp_heading);
   double y = seg_y + d*sin(perp_heading);
 
-  return {x,y};
+  return std::make_tuple(x,y);
 }
 
 #endif  // HELPERS_H
