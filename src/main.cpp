@@ -68,8 +68,6 @@ int main()
 
         if (event == "telemetry")
         {
-          // j[1] is the data JSON object
-
           // Main car's localization Data
           Data data = Data::extract_from_json(j[1]);
 
@@ -77,7 +75,7 @@ int main()
 
           vector<double> next_x_vals;
           vector<double> next_y_vals;
-
+          // Calculates everything!
           controller.update(data, next_x_vals, next_y_vals);
 
           msgJson["next_x"] = next_x_vals;

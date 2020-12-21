@@ -42,21 +42,21 @@ void Controller::check_cars(MyData& data)
     check_car_s += (double)data.prev_size * .02 * check_speed;
     const double SAFE_CAR_DISTANCE = 20.0;
 
-    if (check_car_lane == lane)
+    if (check_car_lane == lane_)
     {
       if (check_car_s > data.car_s && check_car_s - data.car_s < SAFE_CAR_DISTANCE)
       {
         data.too_close = true;
       }
     }
-    else if (check_car_lane == lane - 1)
+    else if (check_car_lane == lane_ - 1)
     {
       if (check_car_s > data.car_s - SAFE_CAR_DISTANCE && check_car_s < data.car_s + SAFE_CAR_DISTANCE)
       {
         data.is_car_left = true;
       }
     }
-    else if (check_car_lane == lane + 1)
+    else if (check_car_lane == lane_ + 1)
     {
       if (check_car_s > data.car_s - SAFE_CAR_DISTANCE && check_car_s < data.car_s + SAFE_CAR_DISTANCE)
       {
@@ -73,32 +73,32 @@ void Controller::logic(MyData& data)
   static const double MAX_DECELERATION = 2*0.224;
   if (data.too_close)
   {
-    if (!data.is_car_left && lane > 0)
+    if (!data.is_car_left && lane_ > 0)
     {
-      lane -= 1;
+      lane_ -= 1;
     }
-    else if (!data.is_car_right && lane < 2)
+    else if (!data.is_car_right && lane_ < 2)
     {
-      lane += 1;
+      lane_ += 1;
     }
     else
     {
-      ref_vel -= MAX_DECELERATION;
+      velocity_ -= MAX_DECELERATION;
     }
   }
   else
   {
-    if (ref_vel < MAX_SPEED)
+    if (velocity_ < MAX_SPEED)
     {
-      ref_vel += MAX_ACCELERATION;
+      velocity_ += MAX_ACCELERATION;
     }
-    if (!data.is_car_left && lane == 2)
+    if (!data.is_car_left && lane_ == 2)
     {
-      lane -= 1;
+      lane_ -= 1;
     }
-    else if (!data.is_car_right && lane == 0)
+    else if (!data.is_car_right && lane_ == 0)
     {
-      lane += 1;
+      lane_ += 1;
     }
   }
 }
@@ -134,9 +134,9 @@ void Controller::calculate_trajectory(MyData& data, std::vector<double>& next_x_
     ptsy.push_back(ref_y);
   }
 
-  auto next_wp0 = getXY(data.car_s + 30, 2 + 4 * lane, map_s, map_x, map_y);
-  auto next_wp1 = getXY(data.car_s + 60, 2 + 4 * lane, map_s, map_x, map_y);
-  auto next_wp2 = getXY(data.car_s + 90, 2 + 4 * lane, map_s, map_x, map_y);
+  auto next_wp0 = getXY(data.car_s + 30, 2 + 4 * lane_, map_s_, map_x_, map_y_);
+  auto next_wp1 = getXY(data.car_s + 60, 2 + 4 * lane_, map_s_, map_x_, map_y_);
+  auto next_wp2 = getXY(data.car_s + 90, 2 + 4 * lane_, map_s_, map_x_, map_y_);
   ptsx.push_back(std::get<0>(next_wp0));
   ptsx.push_back(std::get<0>(next_wp1));
   ptsx.push_back(std::get<0>(next_wp2));
@@ -173,7 +173,7 @@ void Controller::calculate_trajectory(MyData& data, std::vector<double>& next_x_
 
   for (int i = 1; i <= 50 - data.prev_size; i++)
   {
-    double N = target_dist / (.02 * ref_vel / 2.24);
+    double N = target_dist / (.02 * velocity_ / 2.24);
     double x_point = x_add_on + target_dist / N;
     double y_point = s(x_point);
 

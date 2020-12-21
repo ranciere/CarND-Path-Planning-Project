@@ -16,19 +16,24 @@ private:
     MyData(Data d): Data(d), prev_size(d.previous_path_x.size()) {}
   };
 
-  int lane = 1;
-  double ref_vel = 0.0;
-
-  wp_t map_x;
-  wp_t map_y;
-  wp_t map_s;
-  wp_t map_dx;
-  wp_t map_dy;
-
+  // Current lane
+  int lane_ = 1;
+  // Current speed
+  double velocity_ = 0.0;
+  // Map data 
+  wp_t map_x_;
+  wp_t map_y_;
+  wp_t map_s_;
+  wp_t map_dx_;
+  wp_t map_dy_;
+  //// Steps of the algorithm
+  // Check surrounding cars
   void check_cars(MyData& data);
+  // Calculate lanes
   void logic(MyData& data);
+  // Calcluate trajectory
   void calculate_trajectory(MyData& data, std::vector<double>& next_x_vals, std::vector<double>& next_y_vals);
 public:
-  Controller(wp_t x, wp_t y, wp_t s, wp_t dx, wp_t dy): map_x(x), map_y(y), map_s(s), map_dx(dx), map_dy(dy) {}
+  Controller(wp_t x, wp_t y, wp_t s, wp_t dx, wp_t dy): map_x_(x), map_y_(y), map_s_(s), map_dx_(dx), map_dy_(dy) {}
   void update(const Data& data, std::vector<double>& next_x_vals, std::vector<double>& next_y_vals);
 };
